@@ -25,7 +25,8 @@ mpc_z   = MPC_Control_z(sys_z, Ts);
 mpc_yaw = MPC_Control_yaw(sys_yaw, Ts);
 
 % Get control inputs with
-u_x   = mpc_z.get_u([0,0]');
+u_z   = mpc_z.get_u([0,0]');
+u_x   = mpc_x.get_u([0,0,0,2]');
 
 %% FOR FUTURE
 
