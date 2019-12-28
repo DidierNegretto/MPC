@@ -10,16 +10,24 @@ quad = Quad();
 sys = quad.linearize(xs, us);               % Linearize the nonlinear model
 
 %% Apply transformation (TODO 2.2) (DELIVERABLE 2.1)
-sys_transformed = sys*(quad.T)^-1            % New system is  A*x + B*inv(T)*v
+sys_transformed = sys*(quad.T)^-1;           % New system is  A*x + B*inv(T)*v
 
 %% Decompose system (TODO 2.3) 
 [sys_x, sys_y, sys_z, sys_yaw] = quad.decompose(sys_transformed, xs, us);
 
 %% DESIGN MPC CONTROLLER FOR EACH SUBSYSTEM (Part 3)
+Ts = 1/5;
 
-% Descretize the systems
-sys_x_d = c2d(sys_x, 1/5);
-sys_y_d = c2d(sys_y, 1/5);
-sys_z_d = c2d(sys_z, 1/5);
-sys_yaw_d = c2d(sys_yaw, 1/5);
+% Design MPC controller
+mpc_x   = MPC_Control_x(sys_x, Ts);
+mpc_y   = MPC_Control_y(sys_y, Ts);
+mpc_z   = MPC_Control_z(sys_z, Ts);
+mpc_yaw = MPC_Control_yaw(sys_yaw, Ts);
 
+% Get control inputs with
+u_x   = mpc_z.get_u([0,0]');
+
+%% FOR FUTURE
+
+sim = quad.sim(mpc_x, mpc_y, mpc_z, mpc_yaw);
+quad.plot(sim);

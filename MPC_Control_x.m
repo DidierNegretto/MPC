@@ -38,7 +38,7 @@ classdef MPC_Control_x < MPC_Control
       % sys_x. INPUT: u = Mb. STATE: x,x_dot,beta,beta_dot
       
       % Cost matrices (as from ex_4)
-      Q = 10 * eye(2);
+      Q = 10 * eye(n);
       R = 1;
       
       % Costraints matrices
@@ -51,8 +51,26 @@ classdef MPC_Control_x < MPC_Control
       F = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1;
            -1 0 0 0; 0 -1 0 0; 0 0 -1 0; 0 0 0 -1]; 
       f = [inf; inf; inf; inf; inf; inf; inf; inf];
+    
+      % Compute LQR controller for unconstrained system
+      [K,Qf,~] = dlqr(mpc.A,mpc.B,Q,R);
+      % MATLAB defines K as -K, so invert its signal
+      K = -K; 
+    
+      % Compute maximal invariant set
+      Xf = polytope([F;M*K],[f;m]); 
+      Acl = [mpc.A+mpc.B*K];
+      while 1
+          prevXf = Xf;
+          [T,t] = double(Xf);
+          preXf = polytope(T*Acl,t);
+          Xf = intersect(Xf, preXf);
+          if isequal(prevXf, Xf)
+              break
+          end
+      end
+      [Ff,ff] = double(Xf);
 
-      
       con = (x(:,2) == mpc.A*x(:,1) + mpc.B*u(:,1)) + (M*u(:,1) <= m);
       obj = u(:,1)'*R*u(:,1);
       
@@ -63,6 +81,16 @@ classdef MPC_Control_x < MPC_Control
       end
       con = con + (Ff*x(:,N) <= ff);
       obj = obj + x(:,N)'*Qf*x(:,N);
+      
+      % Plot invariant set
+      %{
+      figure
+      Xf.projection(1:2).plot();
+      figure
+      Xf.projection(2:3).plot();
+      figure
+      Xf.projection(3:4).plot();
+      %}
       
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

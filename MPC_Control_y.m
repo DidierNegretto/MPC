@@ -20,7 +20,7 @@ classdef MPC_Control_y < MPC_Control
       us = sdpvar(m, 1);
       
       % SET THE HORIZON HERE
-      N = ...
+      N = 10;
       
       % Predicted state and input trajectories
       x = sdpvar(n, N);
@@ -34,8 +34,63 @@ classdef MPC_Control_y < MPC_Control
       %       the DISCRETE-TIME MODEL of your system
 
       % WRITE THE CONSTRAINTS AND OBJECTIVE HERE
-      con = [];
-      obj = 0;
+      
+      % sys_y. INPUT: u = Ma. STATE: y,y_dot,alpha,alpha_dot
+      
+      % Cost matrices (as from ex_4)
+      Q = 10 * eye(n);
+      R = 1;
+      
+      % Costraints matrices
+      
+      % u in U = { u | Mu <= m } 
+      % Constraint on Ma 
+      M = [1;-1]; m = [0.3; 0.3];
+      % x in X = { x | Fx <= f }
+      % NO CONSTRAINTS ON THE STATE !
+      F = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1;
+           -1 0 0 0; 0 -1 0 0; 0 0 -1 0; 0 0 0 -1]; 
+      f = [inf; inf; inf; inf; inf; inf; inf; inf];
+    
+      % Compute LQR controller for unconstrained system
+      [K,Qf,~] = dlqr(mpc.A,mpc.B,Q,R);
+      % MATLAB defines K as -K, so invert its signal
+      K = -K; 
+    
+      % Compute maximal invariant set
+      Xf = polytope([F;M*K],[f;m]); 
+      Acl = [mpc.A+mpc.B*K];
+      while 1
+          prevXf = Xf;
+          [T,t] = double(Xf);
+          preXf = polytope(T*Acl,t);
+          Xf = intersect(Xf, preXf);
+          if isequal(prevXf, Xf)
+              break
+          end
+      end
+      [Ff,ff] = double(Xf);
+
+      con = (x(:,2) == mpc.A*x(:,1) + mpc.B*u(:,1)) + (M*u(:,1) <= m);
+      obj = u(:,1)'*R*u(:,1);
+      
+      for i = 2:N-1
+        con = con + (x(:,i+1) == mpc.A*x(:,i) + mpc.B*u(:,i));
+        con = con + (F*x(:,i) <= f) + (M*u(:,i) <= m);
+        obj = obj + x(:,i)'*Q*x(:,i) + u(:,i)'*R*u(:,i);
+      end
+      con = con + (Ff*x(:,N) <= ff);
+      obj = obj + x(:,N)'*Qf*x(:,N);
+      
+      % Plot invariant set
+      %{
+      figure
+      Xf.projection(1:2).plot();
+      figure
+      Xf.projection(2:3).plot();
+      figure
+      Xf.projection(3:4).plot();
+      %}
 
       
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
