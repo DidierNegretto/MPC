@@ -20,44 +20,41 @@ classdef MPC_Control_x < MPC_Control
       us = sdpvar(m, 1);
       
       % SET THE HORIZON HERE
-      N = 10;
+      N = 10; %maybe adapt !!!???
       
       % Predicted state and input trajectories
       x = sdpvar(n, N);
       u = sdpvar(m, N-1);
       
-
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
 
       % NOTE: The matrices mpc.A, mpc.B, mpc.C and mpc.D are 
       %       the DISCRETE-TIME MODEL of your system
 
-      % WRITE THE CONSTRAINTS AND OBJECTIVE HERE
-      
-      % sys_x. INPUT: u = Mb. STATE: x,x_dot,beta,beta_dot
+      % WRITE THE CONSTRAINTS AND OBJECTIVE HERE :    
+      % Note:   sys_x.  INPUT: u = Mb.  STATE: x,x_dot,beta,beta_dot
       
       % Cost matrices (as from ex_4)
-      Q = 10 * eye(n);
+      Q = 10 * eye(n);   %maybe to change ??!! but seems ok for now
       R = 1;
       
-      % Costraints matrices
-      
-      % u in U = { u | Mu <= m } 
+      % 1.) Costraints matrices
+   
+      % 1.1) u in U = { u | Mu <= m } 
       % Constraint on Mb 
-      M = [1;-1]; m = [0.3; 0.3];
-      % x in X = { x | Fx <= f }
+      M = [1;-1]; m = [0.3; 0.3];  %x corresponds to Beta. to check but seems ok!
+      % 1.2) x in X = { x | Fx <= f }
       % NO CONSTRAINTS ON THE STATE !
-      F = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1;
-           -1 0 0 0; 0 -1 0 0; 0 0 -1 0; 0 0 0 -1]; 
-      f = [inf; inf; inf; inf; inf; inf; inf; inf];
+      F = [ 1 0 0 0 ; 0  1 0 0 ; 0 0  1 0 ; 0 0 0  1;
+           -1 0 0 0 ; 0 -1 0 0 ; 0 0 -1 0 ; 0 0 0 -1]; 
+      f = ones( 8, 1)*inf; 
     
-      % Compute LQR controller for unconstrained system
+      % 2.) Compute LQR controller for unconstrained system
       [K,Qf,~] = dlqr(mpc.A,mpc.B,Q,R);
-      % MATLAB defines K as -K, so invert its signal
-      K = -K; 
+      K = -K;   % MATLAB defines K as -K, so invert its signal
     
-      % Compute maximal invariant set
+      % 3.) Compute maximal invariant set Xf
       Xf = polytope([F;M*K],[f;m]); 
       Acl = [mpc.A+mpc.B*K];
       while 1
@@ -70,7 +67,8 @@ classdef MPC_Control_x < MPC_Control
           end
       end
       [Ff,ff] = double(Xf);
-
+        
+      % 4.) Compute con and obj
       con = (x(:,2) == mpc.A*x(:,1) + mpc.B*u(:,1)) + (M*u(:,1) <= m);
       obj = u(:,1)'*R*u(:,1);
       
@@ -123,10 +121,30 @@ classdef MPC_Control_x < MPC_Control
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
+
+      %% Set up the MPC cost and constraints using the computed set-point (from ex5 sol)
+      nx   = size(mpc.A,1);
+      nu   = size(mpc.B,2);
+      ny   = size(mpc.C,1);
+
+      % Cost matrices (as from ex_4)
+      Q = 1 * eye(nx);   %maybe to change ??!! 
+      R = 1;
+      %x_hist = zeros(nx,5); %5 for now, we will probably not need this variable anyway
+      %x_hist(:,1) = x(:,1); %Initial condition
+      P = dlyap(mpc.A,Q);    % There is no solution of this lyapounov equation, maybe we should change Q ???
+         
       con = [];
-      obj = 0;
+      obj   = 0;
+      x           = zeros(nx,1);  %TO CHANGE : here we must put the initial condition !!!
       
-      
+      for k = 1:N
+          x = A*x + B*u{k};
+          obj   = obj + norm(chol(Q)*(x-xs),2) + norm(chol(R)*(u{k}-us),2);
+          con = [con, umin <= u{k}<= umax];
+      end
+      obj = obj + (x-xs)'*P*(x-xs);
+
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       

@@ -12,9 +12,9 @@ classdef Quad
     % Only used for plotting
     thrustDir = [0 0 0 0; 0 0 0 0; 1 1 1 1];
     L = [...
-      0.2    0 -0.2    0;...
-      0  0.2    0 -0.2;...
-      0    0    0    0];
+      0.2    0  -0.2     0 ;...
+      0    0.2     0  -0.2 ;...
+      0      0     0     0];
     
     nL = 0.2000;
     rad = 0.0400;
@@ -97,8 +97,7 @@ classdef Quad
             + ctrl_z.L * (ctrl_z.C_bar * sim(i).z_hat - sim(i).x(quad.ind.pos(3)));
           
           % Compute control input
-          sim(i).u = ctrl(sim(i).x, sim(i).ref, sim(i).z_hat);
-          
+          sim(i).u = ctrl(sim(i).x, sim(i).ref, sim(i).z_hat);   
         else
           sim(i).u = ctrl(sim(i).x, sim(i).ref);
         end
@@ -159,8 +158,8 @@ classdef Quad
       
       MSE = @(v) v'*v;
       [y, fval, exitflag] = fmincon(@(y) MSE(quad.f(y(1:12), y(13:16))), ...
-        zeros(16, 1), ...
-        [], [], [], [], LB, UB, [], opt);
+                                    zeros(16, 1), ...
+                                    [], [], [], [], LB, UB, [], opt);
       
       if exitflag < 0 || fval > 1e-3
         error('Could not find trim condition');
@@ -178,7 +177,6 @@ classdef Quad
     function xp = step(quad, x, u, Ts)
       [~, yout] = ode45(@(t, x) quad.f(x, u), [0, Ts], x);
       xp = yout(end,:)';
-      
     end
     
     %
@@ -215,7 +213,7 @@ classdef Quad
     end
     
     %
-    % Compute the quad dynamics
+    % Compute the quad dynamics (Todo 1.1)
     %
     function dx = f(quad, x, u)
       
