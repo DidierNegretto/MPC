@@ -106,7 +106,7 @@ classdef MPC_Control_z < MPC_Control
       Xf.projection(3:4).plot();
       %}
       
-      
+      disp("Controller Z setup finished")
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
@@ -142,10 +142,29 @@ classdef MPC_Control_z < MPC_Control
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
-      con = [];
-      obj = 0;
+      umin = -0.2;
+      umax = 0.3;
       
+      d = 0; % NO DISTURBANCES !!!
+      
+      constraints = [umin <= us <= umax ,...
+                xs == mpc.A*xs + mpc.B*us    ,...
+                ref == mpc.C*xs + d      ];
 
+      objective   = us^2;
+      diagnostics = solvesdp(constraints,objective,sdpsettings('verbose',0));
+
+      if diagnostics.problem == 0
+         % Good! 
+      elseif diagnostics.problem == 1
+          throw(MException('','Infeasible'));
+      else
+          throw(MException('','Something else happened'));
+      end
+      
+      con = constraints;
+      obj = objective;
+      disp("Controller Z steady-state target computed")
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
@@ -166,7 +185,7 @@ classdef MPC_Control_z < MPC_Control
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
-      
+      disp("SETTING ESTIMATOR")
       A_bar = [];
       B_bar = [];
       C_bar = [];

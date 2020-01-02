@@ -37,7 +37,7 @@ classdef MPC_Control_x < MPC_Control
       
       % Cost matrices (as from ex_4)
       Q = 10 * eye(n);   %maybe to change ??!! but seems ok for now
-      R = 0.1;
+      R = 1;
       
       % 1.) Costraints matrices
    
@@ -89,7 +89,7 @@ classdef MPC_Control_x < MPC_Control
       figure
       Xf.projection(3:4).plot();
       %}
-      
+      disp("Controller X setup finished")
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
@@ -123,32 +123,29 @@ classdef MPC_Control_x < MPC_Control
       % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
 
       %% Set up the MPC cost and constraints using the computed set-point (from ex5 sol)
-      nx   = size(mpc.A,1);
-      nu   = size(mpc.B,2);
-      ny   = size(mpc.C,1);
-      N = 10;
+      umin = -0.3;
+      umax = 0.3;
       
-      % Cost matrices (as from ex_4)
-      Q = 0 * eye(nx);   %maybe to change ??!!
-      R = 1;
-      %x_hist = zeros(nx,5); %5 for now, we will probably not need this variable anyway
-      %x_hist(:,1) = x(:,1); %Initial condition
-      %P = dlyap(mpc.A',Q);    % There is no solution of this lyapounov equation, maybe we should change Q ???
-      % Trying with Ricatti equation (Practical MPC slides )
-      [P,K,L,info] = idare(mpc.A,mpc.B,Q,R);
-      disp(info)
+      d = 0; % NO DISTURBANCES !!!
       
-      con = [];
-      obj   = 0;
-      x           = zeros(nx,1);  %TO CHANGE : here we must put the initial condition !!!
-      
-      for k = 1:N
-          x = mpc.A*x + mpc.B*u{k};
-          obj   = obj + norm(chol(Q)*(x-xs),2) + norm(chol(R)*(u{k}-us),2);
-          con = [con, umin <= u{k}<= umax];
-      end
-      obj = obj + (x-xs)'*P*(x-xs);
+      constraints = [umin <= us <= umax ,...
+                xs == mpc.A*xs + mpc.B*us    ,...
+                ref == mpc.C*xs + d      ];
 
+      objective   = us^2;
+      diagnostics = solvesdp(constraints,objective,sdpsettings('verbose',0));
+
+      if diagnostics.problem == 0
+         % Good! 
+      elseif diagnostics.problem == 1
+          throw(MException('','Infeasible'));
+      else
+          throw(MException('','Something else happened'));
+      end
+      
+      con = constraints;
+      obj = objective;
+      disp("Controller X steady-state target computed")
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       

@@ -32,3 +32,6 @@ X = A'XA - (A'XB + S)(B'XB + R)^-1*(A'XB + S)' + Q
 If S is not defined it is set to 0, which means that we get the solution to:
 
 X = Q + A'XA - (A'XB)( R + B'XB )^-1*(A'XB)'
+
+After reading again what the setup_steady_state_target(mpc) does it seems that the compute_sp() in the solution of exercice 5 is the way to take !
+I have therefore changed the funciton and seems to be fine.
