@@ -37,7 +37,7 @@ classdef MPC_Control_x < MPC_Control
       
       % Cost matrices (as from ex_4)
       Q = 10 * eye(n);   %maybe to change ??!! but seems ok for now
-      R = 1;
+      R = 0.1;
       
       % 1.) Costraints matrices
    
@@ -126,14 +126,18 @@ classdef MPC_Control_x < MPC_Control
       nx   = size(mpc.A,1);
       nu   = size(mpc.B,2);
       ny   = size(mpc.C,1);
-
+      N = 10;
+      
       % Cost matrices (as from ex_4)
-      Q = 1 * eye(nx);   %maybe to change ??!! 
+      Q = 0 * eye(nx);   %maybe to change ??!!
       R = 1;
       %x_hist = zeros(nx,5); %5 for now, we will probably not need this variable anyway
       %x_hist(:,1) = x(:,1); %Initial condition
-      P = dlyap(mpc.A,Q);    % There is no solution of this lyapounov equation, maybe we should change Q ???
-         
+      %P = dlyap(mpc.A',Q);    % There is no solution of this lyapounov equation, maybe we should change Q ???
+      % Trying with Ricatti equation (Practical MPC slides )
+      [P,K,L,info] = idare(mpc.A,mpc.B,Q,R);
+      disp(info)
+      
       con = [];
       obj   = 0;
       x           = zeros(nx,1);  %TO CHANGE : here we must put the initial condition !!!
