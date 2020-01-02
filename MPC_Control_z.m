@@ -185,12 +185,21 @@ classdef MPC_Control_z < MPC_Control
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
-      disp("SETTING ESTIMATOR")
-      A_bar = [];
-      B_bar = [];
-      C_bar = [];
-      L = [];
       
+      % Inspired to solutions to exercice 5
+      nx   = size(mpc.A,1);
+      nu   = size(mpc.B,2);
+      ny   = size(mpc.C,1);
+      
+      A_bar = [mpc.A          , zeros(nx,1);
+                zeros(1,nx),1          ];
+      B_bar = [mpc.B;zeros(1,nu)];
+      C_bar = [mpc.C,ones(ny,1)];
+      
+      % WHAT SHOULD GO THERE ? ------V
+      %L = -place(A_bar',C_bar',[3,0.4,50])';
+      L=[];
+      disp("ESTIMATOR setup finished")
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     end
