@@ -143,7 +143,7 @@ classdef MPC_Control_x < MPC_Control
       x           = zeros(nx,1);  %TO CHANGE : here we must put the initial condition !!!
       
       for k = 1:N
-          x = A*x + B*u{k};
+          x = mpc.A*x + mpc.B*u{k};
           obj   = obj + norm(chol(Q)*(x-xs),2) + norm(chol(R)*(u{k}-us),2);
           con = [con, umin <= u{k}<= umax];
       end

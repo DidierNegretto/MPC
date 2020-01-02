@@ -1,4 +1,5 @@
 %% Clear workspace
+yalmip('clear')
 clear all
 close all
 clc
@@ -11,9 +12,9 @@ x0 = zeros(12,1);
 %u = [0;1;0;1]; %just go up
 %u = [1;0;1;0]; %positive yaw + go up
 %u = [0;1;0;1]; %negative yaw + go down
-u = [1.5;1;1;1]; %positive yaw + negative pitch + go up
-sim = ode45( @(t,x) quad.f(x,u), [0, Tf], x0);
-quad.plot(sim,u);
+%u = [1.5;1;1;1]; %positive yaw + negative pitch + go up
+%sim = ode45( @(t,x) quad.f(x,u), [0, Tf], x0);
+%quad.plot(sim,u);
 
 
 %% Generate trimmered and linearized version of the quad-copter (TODO 2.1)
