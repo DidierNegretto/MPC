@@ -12,9 +12,9 @@ x0 = zeros(12,1);
 %u = [0;1;0;1]; %just go up
 %u = [1;0;1;0]; %positive yaw + go up
 %u = [0;1;0;1]; %negative yaw + go down
-%u = [1.5;1;1;1]; %positive yaw + negative pitch + go up
-%sim = ode45( @(t,x) quad.f(x,u), [0, Tf], x0);
-%quad.plot(sim,u);
+u = [1.5;1;1;1]; %positive yaw + negative pitch + go up
+sim = ode45( @(t,x) quad.f(x,u), [0, Tf], x0);
+quad.plot(sim,u);
 
 
 %% Generate trimmered and linearized version of the quad-copter (TODO 2.1)
@@ -44,14 +44,19 @@ mpc_y   = MPC_Control_y(sys_y, Ts);
 mpc_z   = MPC_Control_z(sys_z, Ts);
 mpc_yaw = MPC_Control_yaw(sys_yaw, Ts);
 
-% Get control inputs with
-u_z   = mpc_z.get_u([0,0]');
-u_x   = mpc_x.get_u([0,0,0,2]'); %mpc in x seems fine
+%% SIMULATE CONTROLLERS
+clc
+close all
+iters = 5*(20); % 20 seconds simulation.
+sim_controllers(quad, mpc_x,mpc_y,mpc_z,mpc_yaw, Ts, 5);
+
+
+
 %%
 
 
 
 %% FOR FUTURE
 
-sim = quad.sim(mpc_x, mpc_y, mpc_z, mpc_yaw);
-quad.plot(sim);
+%sim = quad.sim(mpc_x, mpc_y, mpc_z, mpc_yaw);
+%quad.plot(sim);

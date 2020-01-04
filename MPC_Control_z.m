@@ -145,7 +145,7 @@ classdef MPC_Control_z < MPC_Control
       umin = -0.2;
       umax = 0.3;
       
-      d = 0; % NO DISTURBANCES !!!
+      d = 1; % NO DISTURBANCES !!!
       
       constraints = [umin <= us <= umax ,...
                 xs == mpc.A*xs + mpc.B*us    ,...
@@ -198,7 +198,7 @@ classdef MPC_Control_z < MPC_Control
       
       % WHAT SHOULD GO THERE ? ------V
       %L = -place(A_bar',C_bar',[3,0.4,50])';
-      L=[];
+      L=0.01;
       disp("ESTIMATOR setup finished")
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

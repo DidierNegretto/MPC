@@ -47,11 +47,13 @@ classdef MPC_Control_y < MPC_Control
       % Constraint on Ma 
       M = [1;-1]; m = [0.3; 0.3];
       % x in X = { x | Fx <= f }
-      % NO CONSTRAINTS ON THE STATE !
+      % Constraints on alpha
       F = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1;
            -1 0 0 0; 0 -1 0 0; 0 0 -1 0; 0 0 0 -1]; 
       f = [inf; inf; inf; inf; inf; inf; inf; inf];
-    
+      f(3) = 0.035;
+      f(6) = 0.035;
+      
       % Compute LQR controller for unconstrained system
       [K,Qf,~] = dlqr(mpc.A,mpc.B,Q,R);
       % MATLAB defines K as -K, so invert its signal

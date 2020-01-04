@@ -45,10 +45,18 @@ classdef MPC_Control_x < MPC_Control
       % Constraint on Mb 
       M = [1;-1]; m = [0.3; 0.3];  %x corresponds to Beta. to check but seems ok!
       % 1.2) x in X = { x | Fx <= f }
-      % NO CONSTRAINTS ON THE STATE !
-      F = [ 1 0 0 0 ; 0  1 0 0 ; 0 0  1 0 ; 0 0 0  1;
-           -1 0 0 0 ; 0 -1 0 0 ; 0 0 -1 0 ; 0 0 0 -1]; 
-      f = ones( 8, 1)*inf; 
+      % Constraints on beta
+      F = [ 1 0 0 0 ; 
+            0 1 0 0 ; 
+            0 0  1 0 ; 
+            0 0 0  1;
+           -1 0 0 0 ; 
+           0 -1 0 0 ; 
+           0 0 -1 0 ; 
+           0 0 0 -1]; 
+      f = ones( 8, 1)*inf;
+      f(3) = 0.035;
+      f(6) = 0.035;
     
       % 2.) Compute LQR controller for unconstrained system
       [K,Qf,~] = dlqr(mpc.A,mpc.B,Q,R);
