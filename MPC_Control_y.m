@@ -20,7 +20,7 @@ classdef MPC_Control_y < MPC_Control
       us = sdpvar(m, 1);
       
       % SET THE HORIZON HERE
-      N = 10;
+      N = 20;
       
       % Predicted state and input trajectories
       x = sdpvar(n, N);
@@ -35,7 +35,7 @@ classdef MPC_Control_y < MPC_Control
 
       % WRITE THE CONSTRAINTS AND OBJECTIVE HERE
       
-      % sys_y. INPUT: u = Ma. STATE: y,y_dot,alpha,alpha_dot
+      % sys_y. INPUT: u = Ma. STATE: alpha_dot,alpha,y_dot,y
       
       % Cost matrices (as from ex_4)
       Q = 10 * eye(n);
@@ -51,7 +51,7 @@ classdef MPC_Control_y < MPC_Control
       F = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1;
            -1 0 0 0; 0 -1 0 0; 0 0 -1 0; 0 0 0 -1]; 
       f = [inf; inf; inf; inf; inf; inf; inf; inf];
-      f(3) = 0.035;
+      f(2) = 0.035;
       f(6) = 0.035;
       
       % Compute LQR controller for unconstrained system

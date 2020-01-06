@@ -34,7 +34,7 @@ classdef MPC_Control_z < MPC_Control
       d_est = sdpvar(1);
 
       % SET THE HORIZON HERE
-      N = 10;
+      N = 20;
       
       % Predicted state and input trajectories
       x = sdpvar(n, N);
@@ -49,7 +49,7 @@ classdef MPC_Control_z < MPC_Control
 
       % SET THE PROBLEM CONSTRAINTS con AND THE OBJECTIVE obj HERE
       
-      % sys_z. INPUT: u = F. STATE: z,z_dot
+      % sys_z. INPUT: u = F. STATE: z_dot,z
       
       % Cost matrices (as from ex_4)
       Q = 10 * eye(n);

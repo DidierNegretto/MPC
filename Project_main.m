@@ -46,8 +46,8 @@ mpc_z   = MPC_Control_z(sys_z, Ts);
 %% SIMULATE CONTROLLERS
 clc
 close all
-iters = 5*(20); % 20 seconds simulation.
-sim_controllers(quad, mpc_x,mpc_y,mpc_z,mpc_yaw, Ts, 2);
+iters = 5*(60);
+sim_controllers(quad, mpc_x,mpc_y,mpc_z,mpc_yaw, us, Ts, 250);
 
 %% FOR FUTURE
 

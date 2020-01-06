@@ -1,4 +1,4 @@
-function [] = sim_controllers(quad, mpc_x,mpc_y,mpc_z,mpc_yaw, Ts, iters)
+function [] = sim_controllers(quad, mpc_x,mpc_y,mpc_z,mpc_yaw, us, Ts, iters)
 %sim_controllers Simulates the controllers by applying a from 2m to 0
 %for X, Y,Z and yaw and plots the results.
 %   quad, the quadricopter structure
@@ -6,6 +6,7 @@ function [] = sim_controllers(quad, mpc_x,mpc_y,mpc_z,mpc_yaw, Ts, iters)
 %   mpc_y is the controller for the y direction
 %   mpc_z is the controller for the z direction
 %   mpc_yaw is the controller for the yaw direction
+%   us is the steady state input
 %   Ts is the dt bteween two new control signals
 %   iters is the number of iterations final time = iters*Ts
 %
@@ -29,12 +30,12 @@ disp("SIMULATING ...")
 for i = 1:iters
     disp("step "+i+"/"+iters)
     % Get new control inputs with
-    M_B = mpc_x.get_u([x(X), x(X_d), x(B), x(B_d)]'); 
-    M_A = mpc_y.get_u([x(Y), x(Y_d), x(A), x(A_d)]'); 
-    F = mpc_z.get_u([x(Z), x(Z_d)]');
-    M_G = mpc_yaw.get_u([x(G), x(G_d)]');
+    M_B = mpc_x.get_u([x(B_d), x(B), x(X_d), x(X)]'); 
+    M_A = mpc_y.get_u([x(A_d), x(A), x(Y_d), x(Y)]'); 
+    F = mpc_z.get_u([x(Z_d), x(Z)]');
+    M_G = mpc_yaw.get_u([x(G_d), x(G)]');
     v = [F,M_A,M_B,M_G]';
-    u = quad.T^1*v;
+    u = quad.T^-1*v+us;
     
     % Input to apply
     sim = ode45(@(t, x) quad.f(x, u), [(i-1)*Ts, i*Ts], x); 

@@ -20,7 +20,7 @@ classdef MPC_Control_yaw < MPC_Control
       us = sdpvar(m, 1);
       
       % SET THE HORIZON HERE
-      N = 10;
+      N = 20;
       
       % Predicted state and input trajectories
       x = sdpvar(n, N);
@@ -35,7 +35,7 @@ classdef MPC_Control_yaw < MPC_Control
 
       % WRITE THE CONSTRAINTS AND OBJECTIVE HERE
        
-      % sys_yaw. INPUT: u = My. STATE: gamma,gamma_dot
+      % sys_yaw. INPUT: u = My. STATE: gamma_dot,gamma
       
       % Cost matrices (as from ex_4)
       Q = 10 * eye(n);

@@ -20,7 +20,7 @@ classdef MPC_Control_x < MPC_Control
       us = sdpvar(m, 1);
       
       % SET THE HORIZON HERE
-      N = 10; %maybe adapt !!!???
+      N = 20; %maybe adapt !!!???
       
       % Predicted state and input trajectories
       x = sdpvar(n, N);
@@ -33,7 +33,7 @@ classdef MPC_Control_x < MPC_Control
       %       the DISCRETE-TIME MODEL of your system
 
       % WRITE THE CONSTRAINTS AND OBJECTIVE HERE :    
-      % Note:   sys_x.  INPUT: u = Mb.  STATE: x,x_dot,beta,beta_dot
+      % Note:   sys_x.  INPUT: u = Mb.  STATE: beta_dot,beta,x_dot,x
       
       % Cost matrices (as from ex_4)
       Q = 10 * eye(n);   %maybe to change ??!! but seems ok for now
@@ -55,7 +55,7 @@ classdef MPC_Control_x < MPC_Control
            0 0 -1 0 ; 
            0 0 0 -1]; 
       f = ones( 8, 1)*inf;
-      f(3) = 0.035;
+      f(2) = 0.035;
       f(6) = 0.035;
     
       % 2.) Compute LQR controller for unconstrained system
