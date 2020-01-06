@@ -52,7 +52,8 @@ classdef MPC_Control_z < MPC_Control
       % sys_z. INPUT: u = F. STATE: z_dot,z
       
       % Cost matrices (as from ex_4)
-      Q = 10 * eye(n);
+      Q = [ 10 0
+            0 1 ];
       R = 1;
       
       % Costraints matrices
@@ -142,6 +143,9 @@ classdef MPC_Control_z < MPC_Control
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
+      con = [];
+      obj = 0;
+      %%{
       umin = -0.2;
       umax = 0.3;
       
@@ -165,6 +169,7 @@ classdef MPC_Control_z < MPC_Control
       con = constraints;
       obj = objective;
       disp("Controller Z steady-state target computed")
+      %}
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
@@ -185,7 +190,11 @@ classdef MPC_Control_z < MPC_Control
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
-      
+      A_bar = [];
+      B_bar= [];
+      C_bar= []; 
+      L= [];
+      %%{
       % Inspired to solutions to exercice 5
       nx   = size(mpc.A,1);
       nu   = size(mpc.B,2);
@@ -197,9 +206,10 @@ classdef MPC_Control_z < MPC_Control
       C_bar = [mpc.C,ones(ny,1)];
       
       % WHAT SHOULD GO THERE ? ------V
-      %L = -place(A_bar',C_bar',[3,0.4,50])';
+      %L = -place(A_bar',C_bar',[0.3,0.4,0.50])';
       L=0.01;
       disp("ESTIMATOR setup finished")
+      %}
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     end

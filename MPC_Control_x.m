@@ -36,8 +36,11 @@ classdef MPC_Control_x < MPC_Control
       % Note:   sys_x.  INPUT: u = Mb.  STATE: beta_dot,beta,x_dot,x
       
       % Cost matrices (as from ex_4)
-      Q = 10 * eye(n);   %maybe to change ??!! but seems ok for now
-      R = 1;
+      Q = [10 0 0 0 
+           0 0.01 0 0
+           0 0 0.01 0
+           0 0 0 0.01]; 
+      R = 10;
       
       % 1.) Costraints matrices
    
@@ -48,8 +51,8 @@ classdef MPC_Control_x < MPC_Control
       % Constraints on beta
       F = [ 1 0 0 0 ; 
             0 1 0 0 ; 
-            0 0  1 0 ; 
-            0 0 0  1;
+            0 0 1 0 ; 
+            0 0 0 1 ;
            -1 0 0 0 ; 
            0 -1 0 0 ; 
            0 0 -1 0 ; 
@@ -131,6 +134,9 @@ classdef MPC_Control_x < MPC_Control
       % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
 
       %% Set up the MPC cost and constraints using the computed set-point (from ex5 sol)
+      con = [];
+      obj = 0;
+      %%{
       umin = -0.3;
       umax = 0.3;
       
@@ -154,6 +160,7 @@ classdef MPC_Control_x < MPC_Control
       con = constraints;
       obj = objective;
       disp("Controller X steady-state target computed")
+      %}
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       

@@ -38,7 +38,8 @@ classdef MPC_Control_yaw < MPC_Control
       % sys_yaw. INPUT: u = My. STATE: gamma_dot,gamma
       
       % Cost matrices (as from ex_4)
-      Q = 10 * eye(n);
+      Q = [ 1 0
+            0 1];
       R = 1;
       
       % Costraints matrices
@@ -124,6 +125,9 @@ classdef MPC_Control_yaw < MPC_Control
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE       
       % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
+      con = [];
+      obj = 0;
+      %%{
       umin = -0.2;
       umax = 0.2;
       
@@ -147,6 +151,7 @@ classdef MPC_Control_yaw < MPC_Control
       con = constraints;
       obj = objective;
       disp("Controller YAW steady-state target computed")
+      %}
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       

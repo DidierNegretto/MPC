@@ -21,11 +21,14 @@ B_d = 2; B = 5;    Y_d = 8; Y = 11;
 G_d = 3; G = 6;    Z_d = 9; Z = 12;
 
 x0 = zeros(12,1);
+x0(X) = 2;
+x0(Y) = 2;
 x0(Z) = 2;
+x0(G) = -pi/4;
 x = x0;
 
-U = [0, 0, 0, 0]';
-V = [0, 0, 0, 0]';
+U = us;
+V = [0,0,0,0]';
 disp("SIMULATING ...")
 for i = 1:iters
     disp("step "+i+"/"+iters)
@@ -34,8 +37,8 @@ for i = 1:iters
     M_A = mpc_y.get_u([x(A_d), x(A), x(Y_d), x(Y)]'); 
     F = mpc_z.get_u([x(Z_d), x(Z)]');
     M_G = mpc_yaw.get_u([x(G_d), x(G)]');
-    v = [F,M_A,M_B,M_G]';
-    u = quad.T^-1*v+us;
+    v = [F,M_A,M_B,-M_G]';
+    u = quad.T^-1*v.*50+us;
     
     % Input to apply
     sim = ode45(@(t, x) quad.f(x, u), [(i-1)*Ts, i*Ts], x); 

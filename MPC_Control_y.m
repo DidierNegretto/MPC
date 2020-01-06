@@ -38,8 +38,11 @@ classdef MPC_Control_y < MPC_Control
       % sys_y. INPUT: u = Ma. STATE: alpha_dot,alpha,y_dot,y
       
       % Cost matrices (as from ex_4)
-      Q = 10 * eye(n);
-      R = 1;
+      Q = [10 0 0 0
+           0 0.01 0 0
+           0 0 0.01 0
+           0 0 0 0.01];
+      R = 10;
       
       % Costraints matrices
       
@@ -127,6 +130,9 @@ classdef MPC_Control_y < MPC_Control
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
+      con = [];
+      obj = 0;
+      %%{
       umin = -0.3;
       umax = 0.3;
       
@@ -151,6 +157,7 @@ classdef MPC_Control_y < MPC_Control
       obj = objective;
       
       disp("Controller Y steady-state target computed")
+      %}
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
