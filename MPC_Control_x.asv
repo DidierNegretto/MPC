@@ -36,9 +36,9 @@ classdef MPC_Control_x < MPC_Control
       % Note:   sys_x.  INPUT: u = Mb.  STATE: beta_dot,beta,x_dot,x
       
       % Cost matrices (as from ex_4)
-      Q = [10 0 0 0 
+      Q = [0 0 0 0 
            0 0 0 0
-           0 0 5 0
+           0 0 10 0
            0 0 0 10]; 
       R = 0.5;
       

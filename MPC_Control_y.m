@@ -38,11 +38,11 @@ classdef MPC_Control_y < MPC_Control
       % sys_y. INPUT: u = Ma. STATE: alpha_dot,alpha,y_dot,y
       
       % Cost matrices (as from ex_4)
-      Q = [1 0 0 0
-           0 10 0 0
-           0 0 1 0
-           0 0 0 10];
-      R = 0.01;
+      Q = [10 0 0 0 
+           0 0 0 0
+           0 0 5 0
+           0 0 0 10]; 
+      R = 0.5;
       
       % Costraints matrices
       

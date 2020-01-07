@@ -38,6 +38,6 @@ sim_controllers(quad, mpc_x,mpc_y,mpc_z,mpc_yaw, us, Ts, 36);
 %%{
 clc
 close all
-sim = quad.sim(mpc_x, mpc_y, mpc_z, mpc_yaw);
+sim = quad.sim(mpc_x, mpc_y, mpc_z, mpc_yaw,-0.1);
 quad.plot(sim);
 %}

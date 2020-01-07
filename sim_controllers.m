@@ -23,7 +23,7 @@ G_d = 3; G = 6;    Z_d = 9; Z = 12;
 states_name = ["Ad", "Bd", "Gd","A","B","G", "Xd", "Yd", "Zd","X","Y","Z"];
 x0 = zeros(12,1);
 x0(X) = 2;
-x0(Y) = 0;
+x0(Y) = 2;
 x0(Z) = 2;
 x0(G) = -pi/4;
 x = x0;
