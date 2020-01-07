@@ -1,4 +1,4 @@
-function [] = sim_controllers(quad, mpc_x,mpc_y,mpc_z,mpc_yaw, us, Ts, iters)
+function [] = sim_controllers(quad,sys_x, sys_y, sys_yaw, sys_z, mpc_x,mpc_y,mpc_z,mpc_yaw, us, Ts, iters)
 %sim_controllers Simulates the controllers by applying a from 2m to 0
 %for X, Y,Z and yaw and plots the results.
 %   quad, the quadricopter structure
@@ -22,27 +22,27 @@ G_d = 3; G = 6;    Z_d = 9; Z = 12;
 
 states_name = ["Ad", "Bd", "Gd","A","B","G", "Xd", "Yd", "Zd","X","Y","Z"];
 x0 = zeros(12,1);
-x0(X) = 2;
-x0(Y) = 0;
+%x0(X) = 2;
+%x0(Y) = -2;
 x0(Z) = 2;
-x0(G) = -pi/4;
+%x0(G) = -pi/4;
 x = x0;
 
 
-ref_X = 0;
-ref_Y = 0;
-ref_Z = 0;
-ref_G = 0;
+ref_X = 2;
+ref(Y) = 2;
+ref(Z) = 2;
+ref(G) = -pi/4;
 
 V = [0,0,0,0]';
 Xdata = x;
 disp("SIMULATING ...")
 for i = 1:iters
     % Get new control inputs with
-    M_B = mpc_x.get_u([x(B_d), x(B), x(X_d), x(X)]', ref_X); 
-    M_A = mpc_y.get_u([x(A_d), x(A), x(Y_d), x(Y)]', ref_Y);
-    F = mpc_z.get_u([x(Z_d), x(Z)]', ref_Z);
-    M_G = mpc_yaw.get_u([x(G_d), x(G)]', ref_G);
+    M_B = mpc_x.get_u([x(B_d), x(B), x(X_d), x(X)]');%, [ref(B_d), ref(B), ref(X_d), ref(X)]'); 
+    M_A = mpc_y.get_u([x(A_d), x(A), x(Y_d), x(Y)]');%, [ref(A_d), ref(A), ref(Y_d), ref(Y)]'); 
+    F = mpc_z.get_u([x(Z_d), x(Z)]');%, [ref(Z_d), ref(Z)]');
+    M_G = mpc_yaw.get_u([x(G_d), x(G)]');%,[ref(G_d), ref(G)]' );
     v = [F,M_A,M_B,-M_G]';
     %u = quad.T^-1*v.*20+us;
     
@@ -61,11 +61,12 @@ for i = 1:iters
         SIM.y = [SIM.y sim.y];
     end
     %}
-    z = mpc_z.A*[x(Z_d);x(Z)] + mpc_z.B*F;
-    xx = mpc_x.A*[x(B_d);x(B); x(X_d); x(X)] + mpc_x.B*M_B;
-    y = mpc_y.A*[x(A_d);x(A); x(Y_d); x(Y)] + mpc_y.B*M_A;
-    yaw = mpc_yaw.A*[x(G_d);x(G)] + mpc_yaw.B*M_G;
+    z = sys_z.A*[x(Z_d);x(Z)] + sys_z.B*F;
+    xx = sys_x.A*[x(B_d);x(B); x(X_d); x(X)] + sys_x.B*M_B;
+    y = sys_y.A*[x(A_d);x(A); x(Y_d); x(Y)] + sys_y.B*M_A;
+    yaw = sys_yaw.A*[x(G_d);x(G)] + sys_yaw.B*M_G;
     x = [y(1), xx(1), yaw(1), y(2), xx(2), yaw(2), xx(3), y(3), z(1), xx(4), y(4), z(2)]';
+    
     %jsdf = sys.A*[x(Z_d), x(Z)]' + sys.B*F;
     %x(Z_d) = jsdf(1);
     %x(Z) = jsdf(2);
@@ -73,8 +74,6 @@ for i = 1:iters
     Xdata = [Xdata x];
     disp("step "+i+"/"+iters)
 end
-
-
 
 % Plot Drone
 %quad.plot(SIM, [0,0,0,0]');    

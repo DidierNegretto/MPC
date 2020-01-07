@@ -28,7 +28,7 @@ mpc_z   = MPC_Control_z(sys_z, Ts);
 clc
 close all
 iters = 5*(60)*5;
-sim_controllers(quad,sys_x, sys_y, sys_yaw, sys_z, mpc_x,mpc_y,mpc_z,mpc_yaw, us, Ts, 36);
+sim_controllers(quad, mpc_x,mpc_y,mpc_z,mpc_yaw, us, Ts, 36);
 
 %ux = mpc_x.get_u([0,0,0,9]')
 

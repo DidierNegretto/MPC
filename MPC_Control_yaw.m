@@ -39,8 +39,8 @@ classdef MPC_Control_yaw < MPC_Control
       
       % Cost matrices (as from ex_4)
       Q = [ 1 0
-            0 1];
-      R = 1;
+            0 10];
+      R = 0.01;
       
       % Costraints matrices
       
@@ -73,15 +73,15 @@ classdef MPC_Control_yaw < MPC_Control
       [Ff,ff] = double(Xf);
 
       con = (x(:,2) == mpc.A*x(:,1) + mpc.B*u(:,1)) + (M*u(:,1) <= m);
-      obj = u(:,1)'*R*u(:,1);
+      obj = (u(:,1)-us)'*R*(u(:,1)-us);
       
       for i = 2:N-1
         con = con + (x(:,i+1) == mpc.A*x(:,i) + mpc.B*u(:,i));
         con = con + (F*x(:,i) <= f) + (M*u(:,i) <= m);
-        obj = obj + x(:,i)'*Q*x(:,i) + u(:,i)'*R*u(:,i);
+        obj = obj + (x(:,i)-xs)'*Q*(x(:,i)-xs) + (u(:,i)-us)'*R*(u(:,i)-us);
       end
       con = con + (Ff*x(:,N) <= ff);
-      obj = obj + x(:,N)'*Qf*x(:,N);
+      obj = obj + (x(:,N)-xs)'*Qf*(x(:,N)-xs);
       
       % Plot invariant set
       %%{

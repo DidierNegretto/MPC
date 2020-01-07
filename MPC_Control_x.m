@@ -37,10 +37,10 @@ classdef MPC_Control_x < MPC_Control
       
       % Cost matrices (as from ex_4)
       Q = [1 0 0 0 
-           0 1 0 0
+           0 10 0 0
            0 0 1 0
-           0 0 0 1]; 
-      R = 1;
+           0 0 0 10]; 
+      R = 0.01;
       
       % 1.) Costraints matrices
    
@@ -61,6 +61,7 @@ classdef MPC_Control_x < MPC_Control
       f(2) = 0.035;
       f(6) = 0.035;
     
+
       % 2.) Compute LQR controller for unconstrained system
       [K,Qf,~] = dlqr(mpc.A,mpc.B,Q,R);
       K = -K;   % MATLAB defines K as -K, so invert its signal
@@ -81,15 +82,15 @@ classdef MPC_Control_x < MPC_Control
         
       % 4.) Compute con and obj
       con = (x(:,2) == mpc.A*x(:,1) + mpc.B*u(:,1)) + (M*u(:,1) <= m);
-      obj = u(:,1)'*R*u(:,1);
+      obj = (u(:,1)-us)'*R*(u(:,1)-us);
       
       for i = 2:N-1
         con = con + (x(:,i+1) == mpc.A*x(:,i) + mpc.B*u(:,i));
         con = con + (F*x(:,i) <= f) + (M*u(:,i) <= m);
-        obj = obj + x(:,i)'*Q*x(:,i) + u(:,i)'*R*u(:,i);
+        obj = obj + (x(:,i)-xs)'*Q*(x(:,i)-xs) + (u(:,i)-us)'*R*(u(:,i)-us);
       end
       con = con + (Ff*x(:,N) <= ff);
-      obj = obj + x(:,N)'*Qf*x(:,N);
+      obj = obj + (x(:,N)-xs)'*Qf*(x(:,N)-xs);
       
       % Plot invariant set
       %%{
@@ -142,17 +143,23 @@ classdef MPC_Control_x < MPC_Control
       %%{
       umin = -0.3;
       umax = 0.3;
+
+
       
       d = 0; % NO DISTURBANCES !!!
       
-      constraints = [umin <= us <= umax ,...
-                xs == mpc.A*xs + mpc.B*us    ,...
-                ref == mpc.C*xs + d      ];
+      nx = size(mpc.A,1);
+      nu = size(mpc.B,2);
 
-      objective   = us^2;
+      
 
-      con = constraints;
-      obj = objective;
+      con = [umin <= us <= umax ,...
+                      xs == mpc.A*xs + mpc.B*us    ,...
+                      ref == mpc.C*xs + d      ];
+
+      obj   = us^2;
+      
+
       disp("Controller X steady-state target computed")
       %}
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
