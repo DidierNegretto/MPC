@@ -98,13 +98,11 @@ classdef MPC_Control_z < MPC_Control
       obj = obj + x(:,N)'*Qf*x(:,N);
       
       % Plot invariant set
-      %{
+      %%{
       figure
-      Xf.projection(1:2).plot();
-      figure
-      Xf.projection(2:3).plot();
-      figure
-      Xf.projection(3:4).plot();
+      sgtitle("\textbf{Controller Z invariant set}"...
+      , 'FontSize', 20, 'Interpreter','latex');
+      Xf.plot();
       %}
       
       disp("Controller Z setup finished")
@@ -149,7 +147,7 @@ classdef MPC_Control_z < MPC_Control
       umin = -0.2;
       umax = 0.3;
       
-      d = 1; % NO DISTURBANCES !!!
+      d = d_est; % NO DISTURBANCES !!!
       
       constraints = [umin <= us <= umax ,...
                 xs == mpc.A*xs + mpc.B*us    ,...

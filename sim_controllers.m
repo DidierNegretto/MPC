@@ -31,7 +31,6 @@ U = us;
 V = [0,0,0,0]';
 disp("SIMULATING ...")
 for i = 1:iters
-    disp("step "+i+"/"+iters)
     % Get new control inputs with
     M_B = mpc_x.get_u([x(B_d), x(B), x(X_d), x(X)]'); 
     M_A = mpc_y.get_u([x(A_d), x(A), x(Y_d), x(Y)]'); 
@@ -53,6 +52,7 @@ for i = 1:iters
         SIM.y = [SIM.y sim.y];
     end
     x = sim.y(:,end);
+    disp("step "+i+"/"+iters)
 end
 
 % Plot Drone

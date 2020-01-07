@@ -88,12 +88,15 @@ classdef MPC_Control_y < MPC_Control
       obj = obj + x(:,N)'*Qf*x(:,N);
       
       % Plot invariant set
-      %{
+      %%{
       figure
+      sgtitle("\textbf{Controller Y invariant set}"...
+         , 'FontSize', 20, 'Interpreter','latex');
+      subplot(2,2,1)
       Xf.projection(1:2).plot();
-      figure
+      subplot(2,2,2)
       Xf.projection(2:3).plot();
-      figure
+      subplot(2,2,3)
       Xf.projection(3:4).plot();
       %}
 

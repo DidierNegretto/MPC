@@ -84,13 +84,11 @@ classdef MPC_Control_yaw < MPC_Control
       obj = obj + x(:,N)'*Qf*x(:,N);
       
       % Plot invariant set
-      %{
+      %%{
       figure
-      Xf.projection(1:2).plot();
-      figure
-      Xf.projection(2:3).plot();
-      figure
-      Xf.projection(3:4).plot();
+      sgtitle("\textbf{Controller Yaw invariant set}"...
+      , 'FontSize', 20, 'Interpreter','latex');
+      Xf.plot(); 
       %}
 
       disp("Controller YAW setup finished")
