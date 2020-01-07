@@ -36,11 +36,11 @@ classdef MPC_Control_x < MPC_Control
       % Note:   sys_x.  INPUT: u = Mb.  STATE: beta_dot,beta,x_dot,x
       
       % Cost matrices (as from ex_4)
-      Q = [10 0 0 0 
-           0 0.01 0 0
-           0 0 0.01 0
-           0 0 0 0.01]; 
-      R = 10;
+      Q = [1 0 0 0 
+           0 1 0 0
+           0 0 1 0
+           0 0 0 1]; 
+      R = 1;
       
       % 1.) Costraints matrices
    
@@ -150,16 +150,7 @@ classdef MPC_Control_x < MPC_Control
                 ref == mpc.C*xs + d      ];
 
       objective   = us^2;
-      diagnostics = solvesdp(constraints,objective,sdpsettings('verbose',0));
 
-      if diagnostics.problem == 0
-         % Good! 
-      elseif diagnostics.problem == 1
-          throw(MException('','Infeasible'));
-      else
-          throw(MException('','Something else happened'));
-      end
-      
       con = constraints;
       obj = objective;
       disp("Controller X steady-state target computed")

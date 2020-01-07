@@ -52,9 +52,9 @@ classdef MPC_Control_z < MPC_Control
       % sys_z. INPUT: u = F. STATE: z_dot,z
       
       % Cost matrices (as from ex_4)
-      Q = [ 10 0
-            0 1 ];
-      R = 1;
+      Q = [ 1 0
+            0 10 ];
+      R = 0.01;
       
       % Costraints matrices
       
@@ -154,15 +154,6 @@ classdef MPC_Control_z < MPC_Control
                 ref == mpc.C*xs + d      ];
 
       objective   = us^2;
-      diagnostics = solvesdp(constraints,objective,sdpsettings('verbose',0));
-
-      if diagnostics.problem == 0
-         % Good! 
-      elseif diagnostics.problem == 1
-          throw(MException('','Infeasible'));
-      else
-          throw(MException('','Something else happened'));
-      end
       
       con = constraints;
       obj = objective;
@@ -192,7 +183,7 @@ classdef MPC_Control_z < MPC_Control
       B_bar= [];
       C_bar= []; 
       L= [];
-      %%{
+      %{
       % Inspired to solutions to exercice 5
       nx   = size(mpc.A,1);
       nu   = size(mpc.B,2);

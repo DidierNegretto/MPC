@@ -16,17 +16,19 @@ sys = quad.linearize(xs, us);               % Linearize the nonlinear model
 
 %% DESIGN MPC CONTROLLER FOR EACH SUBSYSTEM (Part 3)
 close all
+clc
 % Design MPC controller
 mpc_x   = MPC_Control_x(sys_x, Ts);
 mpc_y   = MPC_Control_y(sys_y, Ts);
 mpc_yaw = MPC_Control_yaw(sys_yaw, Ts);
 mpc_z   = MPC_Control_z(sys_z, Ts);
 
+
 %% SIMULATE CONTROLLERS
 clc
 close all
 iters = 5*(60)*5;
-sim_controllers(quad, mpc_x,mpc_y,mpc_z,mpc_yaw, us, Ts, 60);
+sim_controllers(quad,sys_x, sys_y, sys_yaw, sys_z, mpc_x,mpc_y,mpc_z,mpc_yaw, us, Ts, 36);
 
 %ux = mpc_x.get_u([0,0,0,9]')
 

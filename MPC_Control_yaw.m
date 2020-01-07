@@ -136,15 +136,6 @@ classdef MPC_Control_yaw < MPC_Control
                 ref == mpc.C*xs + d      ];
 
       objective   = us^2;
-      diagnostics = solvesdp(constraints,objective,sdpsettings('verbose',0));
-
-      if diagnostics.problem == 0
-         % Good! 
-      elseif diagnostics.problem == 1
-          throw(MException('','Infeasible'));
-      else
-          throw(MException('','Something else happened'));
-      end
       
       con = constraints;
       obj = objective;
