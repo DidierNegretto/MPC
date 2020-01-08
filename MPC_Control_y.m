@@ -94,10 +94,17 @@ classdef MPC_Control_y < MPC_Control
          , 'FontSize', 20, 'Interpreter','latex');
       subplot(2,2,1)
       Xf.projection(1:2).plot();
+      xlabel("$d\alpha/dt$",'Interpreter','latex')
+      ylabel("$\alpha$",'Interpreter','latex')
       subplot(2,2,2)
       Xf.projection(2:3).plot();
+      xlabel("$\alpha$",'Interpreter','latex')
+      ylabel("$dy/dt$",'Interpreter','latex')
       subplot(2,2,3)
       Xf.projection(3:4).plot();
+      xlabel("$dy/dt$",'Interpreter','latex')
+      ylabel("$y$",'Interpreter','latex')
+      saveas(gcf, "fig\del31\invSet_Y.eps", "epsc")
       %}
 
       

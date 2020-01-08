@@ -36,9 +36,9 @@ classdef MPC_Control_x < MPC_Control
       % Note:   sys_x.  INPUT: u = Mb.  STATE: beta_dot,beta,x_dot,x
       
       % Cost matrices (as from ex_4)
-      Q = [0 0 0 0 
+      Q = [10 0 0 0 
            0 0 0 0
-           0 0 10 0
+           0 0 5 0
            0 0 0 10]; 
       R = 0.5;
       
@@ -99,10 +99,17 @@ classdef MPC_Control_x < MPC_Control
          , 'FontSize', 20, 'Interpreter','latex');
       subplot(2,2,1)
       Xf.projection(1:2).plot();
+      xlabel("$\dot{\beta}}$",'Interpreter','latex')
+      ylabel("$\beta$",'Interpreter','latex')
       subplot(2,2,2)
       Xf.projection(2:3).plot();
+      xlabel("$\beta$",'Interpreter','latex')
+      ylabel("$\dot{x}}$",'Interpreter','latex')
       subplot(2,2,3)
       Xf.projection(3:4).plot();
+      xlabel("$\dot{x}}$",'Interpreter','latex')
+      ylabel("$x$",'Interpreter','latex')
+      saveas(gcf, "fig\del31\
       %}
       disp("Controller X setup finished")
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 

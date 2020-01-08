@@ -102,6 +102,9 @@ classdef MPC_Control_z < MPC_Control
       sgtitle("\textbf{Controller Z invariant set}"...
       , 'FontSize', 20, 'Interpreter','latex');
       Xf.plot();
+      xlabel("$dz/dt$",'Interpreter','latex')
+      ylabel("$z$",'Interpreter','latex')
+      saveas(gcf, "fig\del31\invSet_Z.eps", "epsc")
       %}
       
       disp("Controller Z setup finished")

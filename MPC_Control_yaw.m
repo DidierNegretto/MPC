@@ -89,6 +89,9 @@ classdef MPC_Control_yaw < MPC_Control
       sgtitle("\textbf{Controller Yaw invariant set}"...
       , 'FontSize', 20, 'Interpreter','latex');
       Xf.plot(); 
+      xlabel("$d\gamma/dt$",'Interpreter','latex')
+      ylabel("$\gamma$",'Interpreter','latex')
+      saveas(gcf, "fig\del31\invSet_YAW.eps", "epsc")
       %}
 
       disp("Controller YAW setup finished")
