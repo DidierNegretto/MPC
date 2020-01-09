@@ -81,13 +81,6 @@ classdef MPC_Control_z < MPC_Control
       end
       obj = obj + (x(:,N)-xs)'*Qf*(x(:,N)-xs);
       
-      % Plot invariant set
-      %%{
-      figure
-      sgtitle("\textbf{Controller Z invariant set}"...
-      , 'FontSize', 20, 'Interpreter','latex');
-      Xf.plot();
-      %}
       
       disp("Controller Z setup finished")
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
