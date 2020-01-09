@@ -71,19 +71,6 @@ classdef MPC_Control_z < MPC_Control
       % MATLAB defines K as -K, so invert its signal
       K = -K; 
     
-      % Compute maximal invariant set
-      Xf = polytope([F;M*K],[f;m]); 
-      Acl = [mpc.A+mpc.B*K];
-      while 1
-          prevXf = Xf;
-          [T,t] = double(Xf);
-          preXf = polytope(T*Acl,t);
-          Xf = intersect(Xf, preXf);
-          if isequal(prevXf, Xf)
-              break
-          end
-      end
-      [Ff,ff] = double(Xf);
 
       con = (x(:,2) == mpc.A*x(:,1) + mpc.B*u(:,1) + mpc.B*d_est) + (M*u(:,1) <= m);
       obj = (u(:,1)-us)'*R*(u(:,1)-us);

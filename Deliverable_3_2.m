@@ -24,15 +24,6 @@ mpc_yaw = MPC_Control_yaw(sys_yaw, Ts);
 mpc_z   = MPC_Control_z(sys_z, Ts);
 
 
-%% SIMULATE CONTROLLERS (Deliverable 3.1)
-clc
-close all
-x0 = zeros(12,1);
-x0(quad.ind.pos) = [2 2 2]';
-x0(quad.ind.theta(end)) = pi/4;
-ref = zeros(4,1);
-sim_controllers(mpc_x,mpc_y,mpc_z,mpc_yaw,x0,ref, Ts, 9, "del31");
-
 %% SIMULATE REFERENCE TRACKING CONTROLLERS (Deliverable 3.2)
 clc
 close all

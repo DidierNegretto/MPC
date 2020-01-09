@@ -64,21 +64,7 @@ classdef MPC_Control_x < MPC_Control
 
       % 2.) Compute LQR controller for unconstrained system
       [K,Qf,~] = dlqr(mpc.A,mpc.B,Q,R);
-      K = -K;   % MATLAB defines K as -K, so invert its signal
-    
-      % 3.) Compute maximal invariant set Xf
-      Xf = polytope([F;M*K],[f;m]); 
-      Acl = [mpc.A+mpc.B*K];
-      while 1
-          prevXf = Xf;
-          [T,t] = double(Xf);
-          preXf = polytope(T*Acl,t);
-          Xf = intersect(Xf, preXf);
-          if isequal(prevXf, Xf)
-              break
-          end
-      end
-      [Ff,ff] = double(Xf);
+      K = -K;   % MATLAB defines K as -K, so invert its signal     
         
       % 4.) Compute con and obj
       con = (x(:,2) == mpc.A*x(:,1) + mpc.B*u(:,1)) + (M*u(:,1) <= m);
@@ -89,28 +75,8 @@ classdef MPC_Control_x < MPC_Control
         con = con + (F*x(:,i) <= f) + (M*u(:,i) <= m);
         obj = obj + (x(:,i)-xs)'*Q*(x(:,i)-xs) + (u(:,i)-us)'*R*(u(:,i)-us);
       end
-      con = con + (Ff*x(:,N) <= ff);
       obj = obj + (x(:,N)-xs)'*Qf*(x(:,N)-xs);
       
-      % Plot invariant set
-      %%{
-      figure
-      sgtitle("\textbf{Controller X invariant set}"...
-         , 'FontSize', 20, 'Interpreter','latex');
-      subplot(2,2,1)
-      Xf.projection(1:2).plot();
-      xlabel("$d\beta/dt$",'Interpreter','latex')
-      ylabel("$\beta$",'Interpreter','latex')
-      subplot(2,2,2)
-      Xf.projection(2:3).plot();
-      xlabel("$\beta$",'Interpreter','latex')
-      ylabel("$dx/dt$",'Interpreter','latex')
-      subplot(2,2,3)
-      Xf.projection(3:4).plot();
-      xlabel("$dx/dt$",'Interpreter','latex')
-      ylabel("$x$",'Interpreter','latex')
-      saveas(gcf, "fig\del31\invSet_X.eps", "epsc")
-      %}
       disp("Controller X setup finished")
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
