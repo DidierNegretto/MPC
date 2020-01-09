@@ -24,24 +24,6 @@ mpc_yaw = MPC_Control_yaw(sys_yaw, Ts);
 mpc_z   = MPC_Control_z(sys_z, Ts);
 
 
-%% SIMULATE REFERENCE TRACKING CONTROLLERS (Deliverable 3.2)
-clc
-close all
-x0 = zeros(12,1);
-ref = [2 2 2 pi/4];
-sim_controllers(mpc_x,mpc_y,mpc_z,mpc_yaw,x0,ref, Ts, 9, "del32");
-
-
-%% REFERENCE TRACKING (Deliverable 4.1)
-clc
-close all
-sim = quad.sim(mpc_x, mpc_y, mpc_z, mpc_yaw);
-quad.plot(sim);
-
-figHandle = get(groot, 'Children');
-figHandle(1).set('units','normalized','outerposition',[0 0 1 1]);
-saveas(figHandle(1),"fig\del41\meas.eps","epsc")
-saveas(figHandle(2),"fig\del41\3d.eps","epsc")
 
 %% OFFSET FREE REFERENCE TRACKING (Deliverable 5.1)
 clc
@@ -51,6 +33,5 @@ sim = quad.sim(mpc_x, mpc_y, mpc_z, mpc_yaw, offset);
 quad.plot(sim);
 
 figHandle = get(groot, 'Children');
-figHandle(1).set('units','normalized','outerposition',[0 0 1 1]);
-saveas(figHandle(1),"fig\del51\meas.eps","epsc")
-saveas(figHandle(2),"fig\del51\3d.eps","epsc")
+saveas(figHandle(2),"fig\del51\meas.eps","epsc")
+saveas(figHandle(1),"fig\del51\3d.eps","epsc")
