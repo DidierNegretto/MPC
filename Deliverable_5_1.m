@@ -33,5 +33,6 @@ sim = quad.sim(mpc_x, mpc_y, mpc_z, mpc_yaw, offset);
 quad.plot(sim);
 
 figHandle = get(groot, 'Children');
+figHandle(2).set('units','normalized','outerposition',[0 0 1 1]);
 saveas(figHandle(2),"fig\del51\meas.eps","epsc")
 saveas(figHandle(1),"fig\del51\3d.eps","epsc")
