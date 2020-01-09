@@ -39,8 +39,7 @@ classdef MPC_Control_z < MPC_Control
       % Predicted state and input trajectories
       x = sdpvar(n, N);
       u = sdpvar(m, N-1);
-
-     
+      
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
@@ -49,6 +48,7 @@ classdef MPC_Control_z < MPC_Control
       %       the DISCRETE-TIME MODEL of your system
 
       % SET THE PROBLEM CONSTRAINTS con AND THE OBJECTIVE obj HERE
+      
       % sys_z. INPUT: u = F. STATE: z_dot,z
       
       % Cost matrices (as from ex_4)
@@ -61,11 +61,11 @@ classdef MPC_Control_z < MPC_Control
       % u in U = { u | Mu <= m } 
       % Constraint on F 
       M = [1;-1]; m = [0.3; 0.2];
-      % x in X = { x | Fx <= f } ; Here NO constraints on the state !
+      % x in X = { x | Fx <= f }
+      % NO CONSTRAINTS ON THE STATE !
       F = [1 0; 0 1;
            -1 0; 0 -1]; 
       f = [inf; inf; inf; inf];
-      
       % Compute LQR controller for unconstrained system
       [K,Qf,~] = dlqr(mpc.A,mpc.B,Q,R);
       % MATLAB defines K as -K, so invert its signal
@@ -85,13 +85,15 @@ classdef MPC_Control_z < MPC_Control
       end
       [Ff,ff] = double(Xf);
 
-      con = (x(:,2) == mpc.A*x(:,1) + mpc.B*u(:,1) + mpc.B*d_est) + (M*u(:,1) <= m);
+      con = (x(:,2) == mpc.A*x(:,1) + mpc.B*u(:,1)) + (M*u(:,1) <= m);
       obj = (u(:,1)-us)'*R*(u(:,1)-us);
+      
       for i = 2:N-1
-        con = con + (x(:,i+1) == mpc.A*x(:,i) + mpc.B*u(:,i) + mpc.B*d_est);
-        con = con + (M*u(:,i) <= m) ;
+        con = con + (x(:,i+1) == mpc.A*x(:,i) + mpc.B*u(:,i));
+        con = con + (F*x(:,i) <= f) + (M*u(:,i) <= m);
         obj = obj + (x(:,i)-xs)'*Q*(x(:,i)-xs) + (u(:,i)-us)'*R*(u(:,i)-us);
       end
+      con = con + (Ff*x(:,N) <= ff);
       obj = obj + (x(:,N)-xs)'*Qf*(x(:,N)-xs);
       
       % Plot invariant set
@@ -100,6 +102,9 @@ classdef MPC_Control_z < MPC_Control
       sgtitle("\textbf{Controller Z invariant set}"...
       , 'FontSize', 20, 'Interpreter','latex');
       Xf.plot();
+      xlabel("$dz/dt$",'Interpreter','latex')
+      ylabel("$z$",'Interpreter','latex')
+      saveas(gcf, "fig\del31\invSet_Z.eps", "epsc")
       %}
       
       disp("Controller Z setup finished")
@@ -140,16 +145,17 @@ classdef MPC_Control_z < MPC_Control
       % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
       con = [];
       obj = 0;
-      umin = -0.2;  umax = 0.3;
+      %%{
+      umin = -0.2;
+      umax = 0.3;
       
-      constraints = [umin <= us <= umax ,...
-                xs == mpc.A*(xs) + mpc.B*us  + mpc.B*d_est,...
-                ref == mpc.C*(xs) + d_est];
-
-      objective   = us^2;
+      d = d_est; % NO DISTURBANCES !!!
       
-      con = constraints;
-      obj = objective;
+      con = ((M*us <= m) + (xs == mpc.A*xs + mpc.B*us + mpc.B*d_est) +...
+              (mpc.C*xs + d_est == ref));
+      obj = us'*R*us;
+      
+      
       disp("Controller Z steady-state target computed")
       %}
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
@@ -172,27 +178,27 @@ classdef MPC_Control_z < MPC_Control
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       % You can use the matrices mpc.A, mpc.B, mpc.C and mpc.D
+      
       A_bar = [];
-      B_bar= [];
-      C_bar= []; 
-      L= [];
-
-      nx   = size(mpc.A,1);
-      nu   = size(mpc.B,2);
-      ny   = size(mpc.C,1);
+      B_bar = [];
+      C_bar = [];
+      L = [];
       
-      A_bar = [mpc.A, mpc.B;
-               zeros(1,nx),1];
-      B_bar = [mpc.B;zeros(nu,1)];
-      C_bar = [mpc.C, ones(ny,1)];
+      [n,m] = size(mpc.B);
+      ny = size(mpc.C,1);
       
-      L = -place(A_bar',C_bar',[0.1,0.2,0.3])';
-      disp("L is " + L)
+      A_bar = [mpc.A, mpc.B; zeros(1,n),1];
+      B_bar = [mpc.B;zeros(1,m)];
+      C_bar = [mpc.C,ones(ny,1)];
       
-      disp("ESTIMATOR setup finished")
-
+      poles = [0.5,0.6,0.7];
+      
+      L = -place(A_bar',C_bar',poles)';
+      
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     end
+
+    
   end
 end
